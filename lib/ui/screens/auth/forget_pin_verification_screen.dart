@@ -4,6 +4,7 @@ import 'package:task_manager_app/ui/screens/auth/forget_set_password_screen.dart
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
 class ForgetPinVerificationScreen extends StatefulWidget {
   const ForgetPinVerificationScreen({super.key});
@@ -57,11 +58,22 @@ class _ForgetPinVerificationScreenState
   Widget _buildSingUpFormField() {
     return Column(
       children: [
-        TextFormField(
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            hintText: 'Email',
-          ),
+        PinCodeTextField(
+          length: 6,
+          obscureText: false,
+          animationType: AnimationType.fade,
+          keyboardType: TextInputType.number,
+          pinTheme: PinTheme(
+              shape: PinCodeFieldShape.box,
+              borderRadius: BorderRadius.circular(5),
+              fieldHeight: 50,
+              fieldWidth: 40,
+              activeFillColor: Colors.white,
+              selectedColor: Colors.green),
+          animationDuration: const Duration(milliseconds: 300),
+          backgroundColor: Colors.transparent,
+          enableActiveFill: false,
+          appContext: context,
         ),
         const SizedBox(
           height: 20,
