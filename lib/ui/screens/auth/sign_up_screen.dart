@@ -1,18 +1,17 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/ui/screens/auth/forget_pass_email_verification_screen.dart';
-import 'package:task_manager_app/ui/screens/auth/sign_up_screen.dart';
+import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -25,7 +24,7 @@ class _SignInScreenState extends State<SignInScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Get Started With',
+                'Join With Us',
                 style: textTheme.displaySmall?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -33,11 +32,11 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(
                 height: 15,
               ),
-              _buildSingInFormField(),
+              _buildSingUpFormField(),
               const SizedBox(
                 height: 25,
               ),
-              _buildForgetPasswordText()
+              _buildSignInText()
             ],
           ),
         ),
@@ -45,13 +44,40 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget _buildSingInFormField() {
+  Widget _buildSingUpFormField() {
     return Column(
       children: [
         TextFormField(
           keyboardType: TextInputType.emailAddress,
           decoration: const InputDecoration(
             hintText: 'Email',
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            hintText: 'First Name',
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            hintText: 'Last Name',
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            hintText: 'Mobile',
           ),
         ),
         const SizedBox(
@@ -83,30 +109,24 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Center _buildForgetPasswordText() {
+  Center _buildSignInText() {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextButton(
-              onPressed: _onTapForgetPasswordButton,
-              child: const Text(
-                'Forget Password?',
-                style: TextStyle(color: Colors.grey),
-              )),
           RichText(
               text: TextSpan(
                   style: const TextStyle(
                       color: Colors.black, fontWeight: FontWeight.w500),
-                  text: "Don't have account? ",
+                  text: "Have account? ",
                   children: [
                 TextSpan(
                   style: const TextStyle(
                       color: AppColors.primaryColor,
                       fontWeight: FontWeight.w600),
-                  text: 'Sign up',
+                  text: 'Sign in',
                   recognizer: TapGestureRecognizer()
-                    ..onTap = _onTapSignUpButton,
+                    ..onTap = _onTapSignInButton,
                 )
               ])),
         ],
@@ -118,19 +138,11 @@ class _SignInScreenState extends State<SignInScreen> {
     // TODO: on tap submit need to added
   }
 
-  void _onTapForgetPasswordButton() {
+  void _onTapSignInButton() {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ForgetPassEmailVerificationScreen(),
-        ));
-  }
-
-  void _onTapSignUpButton() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignUpScreen(),
+          builder: (context) => const SignInScreen(),
         ));
   }
 }
