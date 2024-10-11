@@ -3,6 +3,7 @@ import 'package:task_manager_app/ui/screens/views/canceled_task_screen.dart';
 import 'package:task_manager_app/ui/screens/views/completed_task_screen.dart';
 import 'package:task_manager_app/ui/screens/views/new_task_screen.dart';
 import 'package:task_manager_app/ui/screens/views/progress_task_screen.dart';
+import 'package:task_manager_app/ui/widgets/appbar_widget.dart';
 
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
@@ -23,6 +24,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const AppBarWidget(),
       bottomNavigationBar: _buildNavigationBar(_selectedIndex),
       body: _views[_selectedIndex],
     );
@@ -46,6 +48,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
             icon: Icon(Icons.cancel_outlined), label: 'Canceled'),
       ],
       backgroundColor: Colors.white,
+      elevation: 1,
     );
   }
 }
