@@ -34,37 +34,45 @@ class _AddNewTaskState extends State<AddNewTask> {
                 const SizedBox(
                   height: 15,
                 ),
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'Subject',
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  maxLines: 6,
-                  decoration: const InputDecoration(
-                    hintText: 'Description',
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                ElevatedButton(
-                    onPressed: _onTapSubmitButton,
-                    child: Container(
-                        padding: const EdgeInsets.all(4),
-                        child: const Text(
-                          'Add Task',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ))),
+                _buildAddTaskForm(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAddTaskForm() {
+    return Column(
+      children: [
+        TextFormField(
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
+            hintText: 'Subject',
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          maxLines: 6,
+          decoration: const InputDecoration(
+            hintText: 'Description',
+          ),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        ElevatedButton(
+            onPressed: _onTapSubmitButton,
+            child: Container(
+                padding: const EdgeInsets.all(4),
+                child: const Text(
+                  'Add Task',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ))),
+      ],
     );
   }
 }

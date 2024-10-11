@@ -1,41 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
+import 'package:task_manager_app/ui/screens/views/update_profile.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWidget({
     super.key,
+    this.isProfileScreenOpen = false,
   });
+
+  final bool isProfileScreenOpen;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.primaryColor,
       foregroundColor: Colors.white,
-      title: Row(
-        children: [
-          CircleAvatar(
-            child: Image.asset(
-              'assets/images/logo.png',
-              fit: BoxFit.cover,
+      title: GestureDetector(
+        onTap: () {
+          if (isProfileScreenOpen) {
+            return;
+          }
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UpdateProfile(),
+              ));
+        },
+        child: Row(
+          children: [
+            CircleAvatar(
+              child: Image.asset(
+                'assets/images/logo.png',
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          const SizedBox(
-            width: 8,
-          ),
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Shipon Irfan',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18)),
-              Text('shiponirfan.dev@gmail.com',
-                  style: TextStyle(color: Colors.white, fontSize: 14)),
-            ],
-          )
-        ],
+            const SizedBox(
+              width: 8,
+            ),
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Shipon Irfan',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18)),
+                Text('shiponirfan.dev@gmail.com',
+                    style: TextStyle(color: Colors.white, fontSize: 14)),
+              ],
+            )
+          ],
+        ),
       ),
       actions: [
         IconButton(
