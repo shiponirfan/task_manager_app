@@ -2,7 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_pass_email_verification_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_up_screen.dart';
-import 'package:task_manager_app/ui/utils/app_colors.dart';
+import 'package:task_manager_app/ui/screens/views/main_nav_screen.dart';
+import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -116,6 +117,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _onTapSubmitButton() {
     // TODO: on tap submit need to added
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MainNavScreen(),
+        ),
+        (predicate) => false);
   }
 
   void _onTapForgetPasswordButton() {

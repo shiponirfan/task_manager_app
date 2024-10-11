@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
-import 'package:task_manager_app/ui/utils/app_colors.dart';
+import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 
 class SignUpScreen extends StatefulWidget {

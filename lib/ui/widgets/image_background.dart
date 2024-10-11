@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:task_manager_app/ui/utils/image_path.dart';
+import 'package:task_manager_app/utils/image_path.dart';
 
 class ImageBackground extends StatelessWidget {
   const ImageBackground({super.key, required this.child});

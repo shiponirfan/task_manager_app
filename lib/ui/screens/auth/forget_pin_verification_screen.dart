@@ -2,9 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_set_password_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
-import 'package:task_manager_app/ui/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:task_manager_app/utils/app_colors.dart';
 
 class ForgetPinVerificationScreen extends StatefulWidget {
   const ForgetPinVerificationScreen({super.key});
