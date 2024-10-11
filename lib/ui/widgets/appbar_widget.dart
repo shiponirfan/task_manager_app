@@ -11,6 +11,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.primaryColor,
+      foregroundColor: Colors.white,
       title: Row(
         children: [
           CircleAvatar(
@@ -44,7 +45,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                   MaterialPageRoute(
                     builder: (context) => const SignInScreen(),
                   ),
-                      (predicate) => false);
+                  (predicate) => false);
             },
             icon: const Icon(
               Icons.login_rounded,
