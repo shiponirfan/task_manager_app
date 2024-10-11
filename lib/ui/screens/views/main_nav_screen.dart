@@ -4,6 +4,7 @@ import 'package:task_manager_app/ui/screens/views/completed_task_screen.dart';
 import 'package:task_manager_app/ui/screens/views/new_task_screen.dart';
 import 'package:task_manager_app/ui/screens/views/progress_task_screen.dart';
 import 'package:task_manager_app/ui/widgets/appbar_widget.dart';
+import 'package:task_manager_app/utils/app_colors.dart';
 
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
