@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager_app/data/controllers/auth_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
+import 'package:task_manager_app/ui/screens/views/main_nav_screen.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/image_path.dart';
 
@@ -19,11 +21,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _goToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ));
+    await AuthController.getAccessToken();
+    if (AuthController.isLoggedIn()) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainNavScreen(),
+          ));
+    } else {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SignInScreen(),
+          ));
+    }
   }
 
   @override

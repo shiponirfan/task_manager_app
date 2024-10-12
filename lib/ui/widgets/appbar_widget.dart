@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager_app/data/controllers/auth_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/screens/views/update_profile.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
@@ -55,20 +56,23 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SignInScreen(),
-                  ),
-                  (predicate) => false);
-            },
+            onPressed: () => _onTapLogOutBtn(context),
             icon: const Icon(
               Icons.login_rounded,
               color: Colors.white,
             ))
       ],
     );
+  }
+
+  void _onTapLogOutBtn(BuildContext context) async {
+    await AuthController.clearAccessToken();
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SignInScreen(),
+        ),
+        (predicate) => false);
   }
 
   @override

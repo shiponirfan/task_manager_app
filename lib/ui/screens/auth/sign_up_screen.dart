@@ -16,7 +16,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
@@ -58,7 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildSingUpFormField() {
     return Form(
-      key: _globalKey,
+      key: _formKey,
       child: Column(
         children: [
           TextFormField(
