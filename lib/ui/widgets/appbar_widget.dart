@@ -39,16 +39,16 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(
               width: 8,
             ),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Shipon Irfan',
-                    style: TextStyle(
+                Text(AuthController.userName.toString(),
+                    style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 18)),
-                Text('shiponirfan.dev@gmail.com',
-                    style: TextStyle(color: Colors.white, fontSize: 14)),
+                Text(AuthController.userEmail.toString(),
+                    style: const TextStyle(color: Colors.white, fontSize: 14)),
               ],
             )
           ],

@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/data/controllers/auth_controller.dart';
 import 'package:task_manager_app/data/models/network_response.dart';
+import 'package:task_manager_app/data/models/profile_model.dart';
 import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_pass_email_verification_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_up_screen.dart';
@@ -157,7 +158,14 @@ class _SignInScreenState extends State<SignInScreen> {
     );
     if (response.isSuccess) {
       _clearTEField();
+      ProfileModel userInfo =
+          ProfileModel.setProfileModel(response.responseData?['data']);
       AuthController.saveAccessToken(response.responseData?['token']);
+      AuthController.saveUserinfo(
+        firstName: userInfo.firstName,
+        lastName: userInfo.lastName,
+        email: userInfo.email,
+      );
       snackBarWidget(context: context, message: 'Login Successful');
       Navigator.pushAndRemoveUntil(
           context,
