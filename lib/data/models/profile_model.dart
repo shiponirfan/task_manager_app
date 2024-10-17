@@ -16,7 +16,7 @@ class ProfileModel {
       required this.password,
       required this.createdDate});
 
-  static ProfileModel setProfileModel(List<Map> data) {
+  static ProfileModel setProfileModel(List<dynamic> data) {
     return ProfileModel(
       id: data[0]['_id'],
       email: data[0]['email'],

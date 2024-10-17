@@ -7,4 +7,5 @@ class Urls {
   static const String recoverVerifyEmailUrl = '$baseUrl/RecoverVerifyEmail';
   static const String recoverVerifyOtpUrl = '$baseUrl/RecoverVerifyOtp';
   static const String recoverResetPasswordOtpUrl = '$baseUrl/RecoverResetPassword';
+  static const String createTaskUrl = '$baseUrl/createTask';
 }
