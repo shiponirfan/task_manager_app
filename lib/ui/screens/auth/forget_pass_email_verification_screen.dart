@@ -13,6 +13,8 @@ class ForgetPassEmailVerificationScreen extends StatefulWidget {
 }
 
 class _ForgetPassEmailVerificationScreenState extends State<ForgetPassEmailVerificationScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailTEController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -57,10 +59,21 @@ class _ForgetPassEmailVerificationScreenState extends State<ForgetPassEmailVerif
   Widget _buildSingUpFormField() {
     return Column(
       children: [
-        TextFormField(
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            hintText: 'Email',
+        Form(
+          key: _formKey,
+          child: TextFormField(
+            controller: _emailTEController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              hintText: 'Email',
+            ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              if (value?.isEmpty ?? true) {
+                return 'Enter valid email';
+              }
+              return null;
+            },
           ),
         ),
         const SizedBox(
@@ -109,6 +122,12 @@ class _ForgetPassEmailVerificationScreenState extends State<ForgetPassEmailVerif
   }
 
   void _onTapSubmitButton() {
+    if (_formKey.currentState!.validate()) {
+      _onTapNextPage();
+    }
+  }
+
+  void _onTapNextPage() {
     Navigator.push(
         context,
         MaterialPageRoute(

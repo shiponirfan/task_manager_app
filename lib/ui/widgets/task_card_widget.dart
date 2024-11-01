@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 
+import '../../data/models/task_model.dart';
+
 class TaskCardWidget extends StatefulWidget {
+  final TaskModel task;
+
   const TaskCardWidget({
     super.key,
+    required this.task,
   });
 
   @override
@@ -21,9 +26,9 @@ class _TaskCardWidgetState extends State<TaskCardWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Title Of Task',
-              style: TextStyle(
+            Text(
+              widget.task.title ?? 'No Title',
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
               ),
@@ -32,14 +37,16 @@ class _TaskCardWidgetState extends State<TaskCardWidget> {
               height: 4,
             ),
             Text(
-              '${'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual'.substring(0, 80)}...',
+              (widget.task.description?.length ?? 0) > 80
+                  ? '${widget.task.description!.substring(0, 80)}...'
+                  : widget.task.description ?? 'No Description',
             ),
             const SizedBox(
               height: 4,
             ),
-            const Text(
-              'Date: 12/12/2024',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            Text(
+              'Date: ${widget.task.createdDate?.substring(0, 10) ?? 'N/A'}',
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               height: 4,

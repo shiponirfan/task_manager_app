@@ -13,6 +13,9 @@ class ForgetSetPasswordScreen extends StatefulWidget {
 }
 
 class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _passwordTEController = TextEditingController();
+  final TextEditingController _confirmPasswordTEController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -53,35 +56,60 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
   }
 
   Widget _buildSingUpFormField() {
-    return Column(
-      children: [
-        TextFormField(
-          keyboardType: TextInputType.text,
-          obscureText: true,
-          decoration: const InputDecoration(
-            hintText: 'Password',
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _passwordTEController,
+            keyboardType: TextInputType.text,
+            obscureText: true,
+            decoration: const InputDecoration(
+              hintText: 'Password',
+            ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              if (value?.isEmpty ?? true) {
+                return 'Enter valid password';
+              }
+              if (value!.length < 6) {
+                return 'Please enter minimum 6 characters password';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        TextFormField(
-          keyboardType: TextInputType.text,
-          obscureText: true,
-          decoration: const InputDecoration(
-            hintText: 'Confirm Password',
+          const SizedBox(
+            height: 10,
           ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        ElevatedButton(
-            onPressed: _onTapSubmitButton,
-            child: const Text(
-              'Confirm',
-              style: TextStyle(color: Colors.white),
-            )),
-      ],
+          TextFormField(
+            controller: _confirmPasswordTEController,
+            keyboardType: TextInputType.text,
+            obscureText: true,
+            decoration: const InputDecoration(
+              hintText: 'Confirm Password',
+            ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              if (value?.isEmpty ?? true) {
+                return 'Password not matched';
+              }
+              if (value!.length < 6) {
+                return 'Please enter minimum 6 characters password';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+              onPressed: _onTapSubmitButton,
+              child: const Text(
+                'Confirm',
+                style: TextStyle(color: Colors.white),
+              )),
+        ],
+      ),
     );
   }
 
@@ -109,8 +137,13 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
       ),
     );
   }
-
   void _onTapSubmitButton() {
+    if (_formKey.currentState!.validate()) {
+      _onTapSetPassword();
+    }
+  }
+
+  void _onTapSetPassword() {
     Navigator.push(
         context,
         MaterialPageRoute(

@@ -19,33 +19,44 @@ class _AddNewTaskState extends State<AddNewTask> {
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isPending = false;
+  bool isRefreshed = false;
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: const AppBarWidget(),
-      body: ImageBackground(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 44,
-                ),
-                Text(
-                  'Get Started With',
-                  style: textTheme.displaySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            return;
+          } else {
+            Navigator.of(context).pop(isRefreshed);
+          }
+        },
+        child: ImageBackground(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 44,
                   ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                _buildAddTaskForm(),
-              ],
+                  Text(
+                    'Get Started With',
+                    style: textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  _buildAddTaskForm(),
+                ],
+              ),
             ),
           ),
         ),
@@ -119,6 +130,7 @@ class _AddNewTaskState extends State<AddNewTask> {
     Map<String, dynamic> bodyData = {
       'title': _subjectTEController.text.trim(),
       'description': _descriptionTEController.text.trim(),
+      "status": 'New',
     };
 
     NetworkResponse response = await NetworkCaller.postRequest(
@@ -128,6 +140,9 @@ class _AddNewTaskState extends State<AddNewTask> {
     if (response.isSuccess) {
       _clearTextFields();
       snackBarWidget(context: context, message: 'New Task Added');
+      setState(() {
+        isRefreshed = true;
+      });
     } else {
       snackBarWidget(
           context: context, message: response.errorMessage, isError: true);

@@ -147,7 +147,13 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void _onTapSubmitButton() async {
+  void _onTapSubmitButton() {
+    if (_formKey.currentState!.validate()) {
+      _onTapLogin();
+    }
+  }
+
+  void _onTapLogin() async {
     Map<String, dynamic> body = {
       'email': _emailTEController.text,
       'password': _passwordTEController.text
@@ -160,8 +166,8 @@ class _SignInScreenState extends State<SignInScreen> {
       _clearTEField();
       ProfileModel userInfo =
           ProfileModel.setProfileModel(response.responseData?['data']);
-      AuthController.saveAccessToken(response.responseData?['token']);
-      AuthController.saveUserinfo(
+      await AuthController.saveAccessToken(response.responseData?['token']);
+      await AuthController.saveUserinfo(
         firstName: userInfo.firstName,
         lastName: userInfo.lastName,
         email: userInfo.email,

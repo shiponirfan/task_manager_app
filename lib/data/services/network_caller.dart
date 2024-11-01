@@ -13,7 +13,10 @@ class NetworkCaller {
       Uri uri = Uri.parse(url);
       final http.Response response = await http.get(
         uri,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'token': AuthController.accessToken.toString()
+        },
       );
       final decodedData = jsonDecode(response.body);
       printResponse(url, response);

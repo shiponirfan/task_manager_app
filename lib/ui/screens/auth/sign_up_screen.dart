@@ -192,7 +192,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void _onTapSubmitButton() async {
+  void _onTapSubmitButton() {
+    if (_formKey.currentState!.validate()) {
+      _onTapSignUp();
+    }
+  }
+
+  void _onTapSignUp() async {
     Map<String, dynamic> body = {
       'email': _emailTEController.text,
       'firstName': _firstNameTEController.text,

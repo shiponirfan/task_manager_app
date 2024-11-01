@@ -114,6 +114,10 @@ class _ForgetPinVerificationScreenState
   }
 
   void _onTapSubmitButton() {
+      _onTapNextPage();
+  }
+
+  void _onTapNextPage() {
     Navigator.push(
         context,
         MaterialPageRoute(

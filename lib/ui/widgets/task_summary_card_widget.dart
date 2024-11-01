@@ -18,7 +18,7 @@ class TaskSummaryCardWidget extends StatelessWidget {
       shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(10)),
       color: Colors.white,
       child: SizedBox(
-        width: 90,
+        width: 84,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Column(
