@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager_app/data/models/network_response.dart';
+import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
+import 'package:task_manager_app/utils/snackbar_widget.dart';
+import 'package:task_manager_app/utils/urls.dart';
 
 import '../../data/models/task_model.dart';
 
 class TaskCardWidget extends StatefulWidget {
   final TaskModel task;
+  final VoidCallback isRefreshed;
 
   const TaskCardWidget({
     super.key,
     required this.task,
+    required this.isRefreshed,
   });
 
   @override
@@ -16,6 +22,14 @@ class TaskCardWidget extends StatefulWidget {
 }
 
 class _TaskCardWidgetState extends State<TaskCardWidget> {
+  String _selectedTaskStatus = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTaskStatus = widget.task.status!;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -81,8 +95,8 @@ class _TaskCardWidgetState extends State<TaskCardWidget> {
 
   Widget _buildTaskChip() {
     return Chip(
-      label: const Text(
-        'New',
+      label: Text(
+        widget.task.status!,
       ),
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
@@ -101,9 +115,12 @@ class _TaskCardWidgetState extends State<TaskCardWidget> {
             children: ['New', 'Progress', 'Completed', 'Canceled'].map((e) {
               return ListTile(
                 onTap: () {
-                  // TODO: Add Edit Status Option
+                  _onTapChangeTaskStatus(e);
                 },
+                selected: _selectedTaskStatus == e,
                 title: Text(e),
+                trailing:
+                    _selectedTaskStatus == e ? const Icon(Icons.check) : null,
               );
             }).toList(),
           ),
@@ -112,17 +129,33 @@ class _TaskCardWidgetState extends State<TaskCardWidget> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancle')),
-            TextButton(
-                onPressed: () {
-                  // TODO: Add Edit Status Okay Button Option
-                },
-                child: const Text('Okay')),
+                child: const Text('Cancel')),
           ],
         );
       },
     );
   }
 
-  void _onTapDeleteTask() {}
+  Future<void> _onTapChangeTaskStatus(String status) async {
+    NetworkResponse response = await NetworkCaller.getRequest(
+        Urls.updateTaskStatus(widget.task.sId!, status));
+    if (response.isSuccess) {
+      widget.isRefreshed();
+      Navigator.pop(context);
+    } else {
+      snackBarWidget(
+          context: context, message: response.errorMessage, isError: true);
+    }
+  }
+
+  Future<void> _onTapDeleteTask() async {
+    NetworkResponse response =
+        await NetworkCaller.getRequest(Urls.deleteTaskStatus(widget.task.sId!));
+    if (response.isSuccess) {
+      widget.isRefreshed();
+    } else {
+      snackBarWidget(
+          context: context, message: response.errorMessage, isError: true);
+    }
+  }
 }

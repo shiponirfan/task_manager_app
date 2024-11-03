@@ -6,6 +6,7 @@ import 'package:task_manager_app/data/models/task_list_model.dart';
 import 'package:task_manager_app/data/models/task_model.dart';
 import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/ui/screens/views/add_new_task.dart';
+import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/ui/widgets/task_card_widget.dart';
 import 'package:task_manager_app/ui/widgets/task_summary_card_widget.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
@@ -34,82 +35,84 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryColor.withOpacity(0.08),
-      floatingActionButton: _buildFloatingActionButton(context),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: RefreshIndicator(
-          onRefresh: () async {
-            _getNewTaskList();
-            _getTaskStatusCount();
-          },
-          child: Column(
-            children: [
-              _buildTaskCount(),
-              const SizedBox(
-                height: 8,
-              ),
-              Expanded(
-                child: Visibility(
-                  visible: !_isLoading,
-                  replacement: const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                    ),
+        floatingActionButton: _buildFloatingActionButton(context),
+        body: ImageBackground(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                _getNewTaskList();
+                _getTaskStatusCount();
+              },
+              child: Column(
+                children: [
+                  _buildTaskCount(),
+                  const SizedBox(
+                    height: 8,
                   ),
-                  child: _newTaskList.isEmpty
-                      ? const Center(
-                          child: Text('No Task Found!'),
-                        )
-                      : ListView.separated(
-                          itemBuilder: (context, index) {
-                            TaskModel task = _newTaskList[index];
-                            return TaskCardWidget(
-                              task: task,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 8,
-                            );
-                          },
-                          itemCount: _newTaskList.length,
+                  Expanded(
+                    child: Visibility(
+                      visible: !_isLoading,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
                         ),
-                ),
-              )
-            ],
+                      ),
+                      child: _newTaskList.isEmpty
+                          ? const Center(
+                              child: Text('No Task Found!'),
+                            )
+                          : ListView.separated(
+                              itemBuilder: (context, index) {
+                                List<TaskModel> reversedList =
+                                    _newTaskList.reversed.toList();
+                                TaskModel task = reversedList[index];
+                                return TaskCardWidget(
+                                  task: task,
+                                  isRefreshed: () {
+                                    _getNewTaskList();
+                                    _getTaskStatusCount();
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const SizedBox(
+                                  height: 8,
+                                );
+                              },
+                              itemCount: _newTaskList.length,
+                            ),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _buildTaskCount() {
-    TaskCountModel taskCount = TaskCountModel(sId: '', sum: 0);
-    for (int index = 0; index < _taskCount.length; index++) {
-      taskCount = _taskCount[index];
+    Map<String, int> taskCounts = {
+      'New': 0,
+      'Progress': 0,
+      'Completed': 0,
+      'Canceled': 0,
+    };
+
+    for (TaskCountModel task in _taskCount) {
+      if (taskCounts.containsKey(task.sId)) {
+        taskCounts[task.sId!] = task.sum ?? 0;
+      }
     }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: [
-          TaskSummaryCardWidget(
-            count: taskCount.sId == 'New' ? (taskCount.sum ?? 0) : 0,
-            taskName: 'New',
-          ),
-          TaskSummaryCardWidget(
-            count: taskCount.sId == 'Progress' ? (taskCount.sum ?? 0) : 0,
-            taskName: 'Progress',
-          ),
-          TaskSummaryCardWidget(
-            count: taskCount.sId == 'Completed' ? (taskCount.sum ?? 0) : 0,
-            taskName: 'Completed',
-          ),
-          TaskSummaryCardWidget(
-            count: taskCount.sId == 'Canceled' ? (taskCount.sum ?? 0) : 0,
-            taskName: 'Canceled',
-          ),
-        ],
+        children: ['New', 'Progress', 'Completed', 'Canceled'].map((task) {
+          return TaskSummaryCardWidget(
+            count: taskCounts[task]!,
+            taskName: task,
+          );
+        }).toList(),
       ),
     );
   }
@@ -129,7 +132,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
         MaterialPageRoute(
           builder: (context) => const AddNewTask(),
         ));
-    if(isRefreshed){
+    if (isRefreshed) {
       _getNewTaskList();
       _getTaskStatusCount();
     }
