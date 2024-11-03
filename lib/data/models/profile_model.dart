@@ -1,27 +1,16 @@
+import 'package:task_manager_app/data/models/user_model.dart';
+
 class ProfileModel {
-  final String id;
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String mobile;
-  final String createdDate;
+  String? status;
+  UserModel? profileData;
+  String? token;
 
-  ProfileModel(
-      {required this.id,
-      required this.email,
-      required this.firstName,
-      required this.lastName,
-      required this.mobile,
-      required this.createdDate});
+  ProfileModel({this.status, this.profileData, this.token});
 
-  static ProfileModel setProfileModel(Map<String, dynamic> data) {
-    return ProfileModel(
-      id: data['_id'],
-      email: data['email'],
-      firstName: data['firstName'],
-      lastName: data['lastName'],
-      mobile: data['mobile'],
-      createdDate: data['createdDate'],
-    );
+  ProfileModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    profileData =
+        json['data'] != null ? UserModel.fromJson(json['data']) : null;
+    token = json['token'];
   }
 }

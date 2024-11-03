@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/data/controllers/auth_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
@@ -14,6 +16,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    Uint8List imageBytes = base64Decode(AuthController.userData?.photo ?? '');
     return AppBar(
       backgroundColor: AppColors.primaryColor,
       foregroundColor: Colors.white,
@@ -30,11 +33,22 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         },
         child: Row(
           children: [
-            CircleAvatar(
-              child: Image.asset(
-                'assets/images/logo.png',
-                fit: BoxFit.cover,
-              ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: imageBytes.isNotEmpty
+                  ? Image.memory(
+                      imageBytes,
+                      fit: BoxFit.cover,
+                      width: 40,
+                      height: 40,
+                    )
+                  : Image.asset(
+                      AuthController.userData?.photo ??
+                          'assets/images/blank-profile-picture.png',
+                      fit: BoxFit.cover,
+                      width: 40,
+                      height: 40,
+                    ),
             ),
             const SizedBox(
               width: 8,
@@ -42,12 +56,12 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(AuthController.userName.toString(),
+                Text(AuthController.userData?.fullName ?? '',
                     style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 18)),
-                Text(AuthController.userEmail.toString(),
+                Text(AuthController.userData?.email ?? '',
                     style: const TextStyle(color: Colors.white, fontSize: 14)),
               ],
             )

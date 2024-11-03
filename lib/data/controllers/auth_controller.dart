@@ -1,12 +1,13 @@
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task_manager_app/data/models/user_model.dart';
 
-class AuthController {
+class AuthController extends ChangeNotifier {
   static const String _accessTokenKey = 'access-token';
-  static const String _userName = 'user-name';
-  static const String _userEmail = 'user-email';
+  static const String _userData = 'user-data';
   static String? accessToken;
-  static String? userName;
-  static String? userEmail;
+  static UserModel? userData;
 
   static Future<void> saveAccessToken(String token) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -31,20 +32,21 @@ class AuthController {
     return accessToken != null;
   }
 
-  static Future<void> saveUserinfo(
-      {required String firstName, required String lastName, required String email}) async {
+  static Future<void> saveUserinfo(UserModel userModel) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.setString(_userName, '$firstName $lastName');
-    await sharedPreferences.setString(_userEmail, email);
-    userName = '$firstName $lastName';
-    userEmail = email;
+    await sharedPreferences.setString(
+        _userData, jsonEncode(userModel.toJson()));
+    userData = userModel;
   }
 
-  static Future<void> getUserInfo() async {
+  static Future<UserModel?> getUserInfo() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? name = sharedPreferences.getString(_userName);
-    String? email = sharedPreferences.getString(_userEmail);
-    userName = name;
-    userEmail = email;
+    String? userEncodedModel = sharedPreferences.getString(_userData);
+    if (userEncodedModel == null) {
+      return null;
+    }
+    UserModel userModel = UserModel.fromJson(jsonDecode(userEncodedModel));
+    userData = userModel;
+    return userData;
   }
 }
