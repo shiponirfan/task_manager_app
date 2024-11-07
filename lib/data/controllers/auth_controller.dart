@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager_app/data/models/user_model.dart';
 
-class AuthController extends ChangeNotifier {
+class AuthController {
   static const String _accessTokenKey = 'access-token';
   static const String _userData = 'user-data';
   static String? accessToken;
@@ -32,10 +31,11 @@ class AuthController extends ChangeNotifier {
     return accessToken != null;
   }
 
-  static Future<void> saveUserinfo(UserModel userModel) async {
+  static Future<void> saveUserInfo(UserModel userModel) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString(
         _userData, jsonEncode(userModel.toJson()));
+    sharedPreferences.reload();
     userData = userModel;
   }
 

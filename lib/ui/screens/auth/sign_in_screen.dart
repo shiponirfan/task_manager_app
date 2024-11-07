@@ -166,7 +166,7 @@ class _SignInScreenState extends State<SignInScreen> {
       _clearTEField();
       ProfileModel userData = ProfileModel.fromJson(response.responseData);
       await AuthController.saveAccessToken(userData.token!);
-      await AuthController.saveUserinfo(userData.profileData!);
+      await AuthController.saveUserInfo(userData.profileData!);
       snackBarWidget(context: context, message: 'Login Successful');
       Navigator.pushAndRemoveUntil(
           context,

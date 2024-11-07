@@ -2,11 +2,17 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/data/controllers/auth_controller.dart';
+import 'package:task_manager_app/data/models/network_response.dart';
+import 'package:task_manager_app/data/models/updated_profile_details_model.dart';
+import 'package:task_manager_app/data/models/user_model.dart';
+import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/screens/views/update_profile.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
+import 'package:task_manager_app/utils/snackbar_widget.dart';
+import 'package:task_manager_app/utils/urls.dart';
 
-class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
+class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
   const AppBarWidget({
     super.key,
     this.isProfileScreenOpen = false,
@@ -15,20 +21,43 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final bool isProfileScreenOpen;
 
   @override
+  State<AppBarWidget> createState() => _AppBarWidgetState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _AppBarWidgetState extends State<AppBarWidget> {
+  UserModel userDetails = UserModel(
+    firstName: AuthController.userData!.firstName,
+    lastName: AuthController.userData!.lastName,
+    email: AuthController.userData!.email,
+    photo: AuthController.userData!.photo,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _getUpdatedProfileDetails();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Uint8List imageBytes = base64Decode(AuthController.userData?.photo ?? '');
+    Uint8List imageBytes = base64Decode(userDetails.photo ?? '');
     return AppBar(
       backgroundColor: AppColors.primaryColor,
       foregroundColor: Colors.white,
       title: GestureDetector(
         onTap: () {
-          if (isProfileScreenOpen) {
+          if (widget.isProfileScreenOpen) {
             return;
           }
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const UpdateProfile(),
+                builder: (context) => UpdateProfile(
+                  getUpdatedProfileDetails: _getUpdatedProfileDetails,
+                ),
               ));
         },
         child: Row(
@@ -43,8 +72,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                       height: 40,
                     )
                   : Image.asset(
-                      AuthController.userData?.photo ??
-                          'assets/images/blank-profile-picture.png',
+                      'assets/images/blank-profile-picture.png',
                       fit: BoxFit.cover,
                       width: 40,
                       height: 40,
@@ -56,12 +84,12 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(AuthController.userData?.fullName ?? '',
+                Text(userDetails.fullName,
                     style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 18)),
-                Text(AuthController.userData?.email ?? '',
+                Text(userDetails.email ?? '',
                     style: const TextStyle(color: Colors.white, fontSize: 14)),
               ],
             )
@@ -89,6 +117,23 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         (predicate) => false);
   }
 
-  @override
+  Future<void> _getUpdatedProfileDetails() async {
+    NetworkResponse response =
+        await NetworkCaller.getRequest(Urls.updateProfileDetails);
+    if (response.isSuccess) {
+      UpdateProfileDetailsModel updateProfileDetailsModel =
+          UpdateProfileDetailsModel.fromJson(response.responseData);
+      setState(() {
+        userDetails = updateProfileDetailsModel.updatedProfileDetails?.first ??
+            UserModel();
+      });
+      await AuthController.saveUserInfo(
+          updateProfileDetailsModel.updatedProfileDetails!.first);
+    } else {
+      snackBarWidget(
+          context: context, message: response.errorMessage, isError: true);
+    }
+  }
+
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

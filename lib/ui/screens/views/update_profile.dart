@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/data/controllers/auth_controller.dart';
 import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/models/user_model.dart';
 import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/ui/widgets/appbar_widget.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
@@ -12,7 +10,9 @@ import 'package:task_manager_app/utils/urls.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UpdateProfile extends StatefulWidget {
-  const UpdateProfile({super.key});
+  const UpdateProfile({super.key, required this.getUpdatedProfileDetails});
+
+  final VoidCallback getUpdatedProfileDetails;
 
   @override
   State<UpdateProfile> createState() => _UpdateProfileState();
@@ -245,12 +245,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
       body: body,
     );
     if (response.isSuccess) {
-      UserModel userModel = UserModel.fromJson(body);
-      await AuthController.saveUserinfo(userModel);
+      widget.getUpdatedProfileDetails();
       snackBarWidget(context: context, message: 'Profile Updated Successful');
       _isPending = false;
-      await AuthController.getUserInfo();
       setState(() {});
+      Navigator.pop(context);
     } else {
       _isPending = false;
       setState(() {});
