@@ -1,13 +1,19 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager_app/data/models/network_response.dart';
+import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_set_password_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
+import 'package:task_manager_app/utils/snackbar_widget.dart';
+import 'package:task_manager_app/utils/urls.dart';
 
 class ForgetPinVerificationScreen extends StatefulWidget {
-  const ForgetPinVerificationScreen({super.key});
+  const ForgetPinVerificationScreen({super.key, required this.email});
+
+  final String email;
 
   @override
   State<ForgetPinVerificationScreen> createState() =>
@@ -16,6 +22,9 @@ class ForgetPinVerificationScreen extends StatefulWidget {
 
 class _ForgetPinVerificationScreenState
     extends State<ForgetPinVerificationScreen> {
+  bool _isLoading = false;
+  final TextEditingController _otp = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -74,16 +83,21 @@ class _ForgetPinVerificationScreenState
           backgroundColor: Colors.transparent,
           enableActiveFill: false,
           appContext: context,
+          controller: _otp,
         ),
         const SizedBox(
           height: 20,
         ),
         ElevatedButton(
             onPressed: _onTapSubmitButton,
-            child: const Text(
-              'Verify',
-              style: TextStyle(color: Colors.white),
-            )),
+            child: _isLoading == true
+                ? const CircularProgressIndicator(
+                    color: Colors.white,
+                  )
+                : const Text(
+                    'Verify',
+                    style: TextStyle(color: Colors.white),
+                  )),
       ],
     );
   }
@@ -114,14 +128,17 @@ class _ForgetPinVerificationScreenState
   }
 
   void _onTapSubmitButton() {
-      _onTapNextPage();
+    _getRecoverVerifyOtp();
   }
 
   void _onTapNextPage() {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ForgetSetPasswordScreen(),
+          builder: (context) => ForgetSetPasswordScreen(
+            email: widget.email,
+            otp: _otp.text,
+          ),
         ));
   }
 
@@ -131,5 +148,28 @@ class _ForgetPinVerificationScreenState
         MaterialPageRoute(
           builder: (context) => const SignInScreen(),
         ));
+  }
+
+  Future<void> _getRecoverVerifyOtp() async {
+    setState(() {
+      _isLoading = true;
+    });
+    NetworkResponse response = await NetworkCaller.getRequest(
+        Urls.recoverVerifyOtp(widget.email, int.parse(_otp.text)));
+    if (response.isSuccess) {
+      setState(() {
+        _isLoading = false;
+      });
+      snackBarWidget(context: context, message: response.responseData['data']);
+      _onTapNextPage();
+    } else {
+      snackBarWidget(
+          context: context,
+          message: response.responseData['data'],
+          isError: true);
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 }

@@ -1,11 +1,19 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager_app/data/models/network_response.dart';
+import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
+import 'package:task_manager_app/utils/snackbar_widget.dart';
+import 'package:task_manager_app/utils/urls.dart';
 
 class ForgetSetPasswordScreen extends StatefulWidget {
-  const ForgetSetPasswordScreen({super.key});
+  const ForgetSetPasswordScreen(
+      {super.key, required this.email, required this.otp});
+
+  final String email;
+  final String otp;
 
   @override
   State<ForgetSetPasswordScreen> createState() =>
@@ -15,7 +23,10 @@ class ForgetSetPasswordScreen extends StatefulWidget {
 class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordTEController = TextEditingController();
-  final TextEditingController _confirmPasswordTEController = TextEditingController();
+  final TextEditingController _confirmPasswordTEController =
+      TextEditingController();
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -90,7 +101,8 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
-              if (value?.isEmpty ?? true) {
+              if (_passwordTEController.text !=
+                  _confirmPasswordTEController.text) {
                 return 'Password not matched';
               }
               if (value!.length < 6) {
@@ -104,10 +116,14 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
           ),
           ElevatedButton(
               onPressed: _onTapSubmitButton,
-              child: const Text(
-                'Confirm',
-                style: TextStyle(color: Colors.white),
-              )),
+              child: _isLoading == true
+                  ? const CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : const Text(
+                      'Confirm',
+                      style: TextStyle(color: Colors.white),
+                    )),
         ],
       ),
     );
@@ -137,9 +153,10 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
       ),
     );
   }
+
   void _onTapSubmitButton() {
     if (_formKey.currentState!.validate()) {
-      _onTapSetPassword();
+      _getRecoverResetPassword();
     }
   }
 
@@ -157,5 +174,33 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
         MaterialPageRoute(
           builder: (context) => const SignInScreen(),
         ));
+  }
+
+  Future<void> _getRecoverResetPassword() async {
+    setState(() {
+      _isLoading = true;
+    });
+    Map<String, dynamic> body = {
+      "email": widget.email,
+      "OTP": widget.otp,
+      "password": _passwordTEController.text,
+    };
+    NetworkResponse response = await NetworkCaller.postRequest(
+        url: Urls.recoverResetPassword, body: body);
+    if (response.isSuccess) {
+      setState(() {
+        _isLoading = false;
+      });
+      snackBarWidget(context: context, message: response.responseData['data']);
+      _onTapSetPassword();
+    } else {
+      snackBarWidget(
+          context: context,
+          message: response.responseData['data'],
+          isError: true);
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 }
