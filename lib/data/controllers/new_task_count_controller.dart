@@ -29,6 +29,8 @@ class NewTaskCountController extends GetxController {
       AllTaskStatusCountModel allTaskStatusCountModel =
           AllTaskStatusCountModel.fromJson(response.responseData);
       _newTaskCountList = allTaskStatusCountModel.taskCount ?? [];
+      isSuccess = true;
+      update();
     } else {
       _errorMessage = response.errorMessage;
     }

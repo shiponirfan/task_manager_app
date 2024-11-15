@@ -11,6 +11,7 @@ import 'package:task_manager_app/ui/screens/views/completed_task_screen.dart';
 import 'package:task_manager_app/ui/screens/views/main_nav_screen.dart';
 import 'package:task_manager_app/ui/screens/views/new_task_screen.dart';
 import 'package:task_manager_app/ui/screens/views/progress_task_screen.dart';
+import 'package:task_manager_app/ui/screens/views/update_profile.dart';
 
 class Routes {
   static Map<String, Widget Function(BuildContext)> route = {
@@ -27,7 +28,7 @@ class Routes {
     CompletedTaskScreen.route: (context) => const CompletedTaskScreen(),
     NewTaskScreen.route: (context) => const NewTaskScreen(),
     ProgressTaskScreen.route: (context) => const ProgressTaskScreen(),
-    // UpdateProfile.route : UpdateProfile(),
+    UpdateProfile.route: (context) => const UpdateProfile(),
     MainNavScreen.route: (context) => const MainNavScreen(),
   };
 }

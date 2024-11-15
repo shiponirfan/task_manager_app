@@ -4,9 +4,11 @@ import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/screens/views/main_nav_screen.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/image_path.dart';
+import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
   static String route = '/';
 
   @override
@@ -25,17 +27,9 @@ class _SplashScreenState extends State<SplashScreen> {
     await AuthController.getAccessToken();
     if (AuthController.isLoggedIn()) {
       AuthController.getUserInfo();
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MainNavScreen(),
-          ));
+      Get.offNamed(MainNavScreen.route);
     } else {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SignInScreen(),
-          ));
+      Get.offNamed(SignInScreen.route);
     }
   }
 

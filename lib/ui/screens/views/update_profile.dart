@@ -1,18 +1,14 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/data/controllers/auth_controller.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
+import 'package:task_manager_app/data/controllers/update_profile_controller.dart';
 import 'package:task_manager_app/ui/widgets/appbar_widget.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
 
 class UpdateProfile extends StatefulWidget {
-  const UpdateProfile({super.key, required this.getUpdatedProfileDetails});
+  const UpdateProfile({super.key});
 
-  final VoidCallback getUpdatedProfileDetails;
   static String route = '/update-profile';
 
   @override
@@ -27,6 +23,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  UpdateProfileController updateProfileController =
+      Get.find<UpdateProfileController>();
+
   void setUserData() {
     _emailTEController.text = AuthController.userData?.email ?? '';
     _firstNameTEController.text = AuthController.userData?.firstName ?? '';
@@ -34,8 +33,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
     _mobileTEController.text = AuthController.userData?.mobile ?? '';
   }
 
-  bool _isPending = false;
-  XFile? _selectedImage;
+  // XFile? _selectedImage;
 
   @override
   void initState() {
@@ -157,18 +155,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
           const SizedBox(
             height: 15,
           ),
-          ElevatedButton(
-              onPressed: _onTapSubmitButton,
-              child: Container(
-                  padding: const EdgeInsets.all(4),
-                  child: _isPending
-                      ? const CircularProgressIndicator(
-                          color: Colors.white,
-                        )
-                      : const Text(
-                          'Update',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ))),
+          GetBuilder<UpdateProfileController>(builder: (controller) {
+            return ElevatedButton(
+                onPressed: _onTapSubmitButton,
+                child: Container(
+                    padding: const EdgeInsets.all(4),
+                    child: controller.isPending
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            'Update',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          )));
+          }),
         ],
       ),
     );
@@ -201,16 +201,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
             const SizedBox(
               width: 10,
             ),
-            Text(_getSelectedImageTitle())
+            GetBuilder<UpdateProfileController>(builder: (controller) {
+              return Text(_getSelectedImageTitle(controller));
+            })
           ],
         ),
       ),
     );
   }
 
-  String _getSelectedImageTitle() {
-    if (_selectedImage != null) {
-      return _selectedImage!.name.substring(0, 20);
+  String _getSelectedImageTitle(UpdateProfileController controller) {
+    if (controller.selectedImage != null) {
+      return controller.selectedImage!.name.substring(0, 20);
     }
     return 'Choose Your Photo';
   }
@@ -222,49 +224,24 @@ class _UpdateProfileState extends State<UpdateProfile> {
   }
 
   void _onTapUpdateProfile() async {
-    _isPending = true;
-    setState(() {});
-    Map<String, dynamic> body = {
-      'email': _emailTEController.text,
-      'firstName': _firstNameTEController.text,
-      'lastName': _lastNameTEController.text,
-      'mobile': _mobileTEController.text,
-    };
-
-    if (_passwordTEController.text.isNotEmpty) {
-      body['password'] = _passwordTEController.text;
-    }
-
-    if (_selectedImage != null) {
-      List<int> imageBytes = await _selectedImage!.readAsBytes();
-      String convertedImage = base64Encode(imageBytes);
-      body['photo'] = convertedImage;
-    }
-
-    NetworkResponse response = await NetworkCaller.postRequest(
-      url: Urls.updateProfile,
-      body: body,
+    final bool isSuccess = await updateProfileController.postUpdateProfile(
+      email: _emailTEController.text.trim(),
+      firstName: _firstNameTEController.text.trim(),
+      lastName: _lastNameTEController.text.trim(),
+      mobile: _mobileTEController.text.trim(),
+      password: _passwordTEController.text,
     );
-    if (response.isSuccess) {
-      widget.getUpdatedProfileDetails();
+    if (isSuccess) {
       snackBarWidget(context: context, message: 'Profile Updated Successful');
-      _isPending = false;
-      setState(() {});
-      Navigator.pop(context);
     } else {
-      _isPending = false;
-      setState(() {});
       snackBarWidget(
-          context: context, message: response.errorMessage, isError: true);
+          context: context,
+          message: updateProfileController.errorPostMessage ??
+              'Something went wrong!');
     }
   }
 
   Future<void> _imagePicker() async {
-    ImagePicker picker = ImagePicker();
-    XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      _selectedImage = pickedImage;
-      setState(() {});
-    }
+    await updateProfileController.imagePicker();
   }
 }

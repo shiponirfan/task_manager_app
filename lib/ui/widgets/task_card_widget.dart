@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/data/models/network_response.dart';
+import 'package:task_manager_app/data/models/task_model.dart';
 import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
 import 'package:task_manager_app/utils/urls.dart';
 
-import '../../data/models/task_model.dart';
 
 class TaskCardWidget extends StatefulWidget {
   final TaskModel task;

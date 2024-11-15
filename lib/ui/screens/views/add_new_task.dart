@@ -28,45 +28,47 @@ class _AddNewTaskState extends State<AddNewTask> {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: const AppBarWidget(),
-      body: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) {
-            return;
-          } else {
-            Navigator.of(context).pop(addNewTaskController.isRefreshed);
-          }
-        },
-        child: ImageBackground(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 44,
-                  ),
-                  Text(
-                    'Get Started With',
-                    style: textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w500,
+      body: GetBuilder<AddNewTaskController>(builder: (controller) {
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) {
+              return;
+            } else {
+              Navigator.of(context).pop(controller.isRefreshed);
+            }
+          },
+          child: ImageBackground(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 44,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  _buildAddTaskForm(),
-                ],
+                    Text(
+                      'Get Started With',
+                      style: textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    _buildAddTaskForm(controller),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
-  Widget _buildAddTaskForm() {
+  Widget _buildAddTaskForm(AddNewTaskController controller) {
     return Form(
       key: _formKey,
       child: Column(
@@ -105,18 +107,16 @@ class _AddNewTaskState extends State<AddNewTask> {
           ),
           ElevatedButton(
               onPressed: _onTapSubmitButton,
-              child: GetBuilder<AddNewTaskController>(builder: (controller) {
-                return Container(
-                    padding: const EdgeInsets.all(4),
-                    child: controller.isPending
-                        ? const CircularProgressIndicator(
-                            color: Colors.white,
-                          )
-                        : const Text(
-                            'Add Task',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ));
-              })),
+              child: Container(
+                  padding: const EdgeInsets.all(4),
+                  child: controller.isPending
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Text(
+                          'Add Task',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ))),
         ],
       ),
     );
@@ -129,7 +129,7 @@ class _AddNewTaskState extends State<AddNewTask> {
   }
 
   void _addNewTask() async {
-    bool isSuccess = await AddNewTaskController().addNewTask(
+    bool isSuccess = await addNewTaskController.addNewTask(
       _subjectTEController.text.trim(),
       _descriptionTEController.text.trim(),
     );
