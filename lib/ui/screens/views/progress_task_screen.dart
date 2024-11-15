@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/models/task_list_model.dart';
+import 'package:task_manager_app/data/controllers/progress_task_controller.dart';
 import 'package:task_manager_app/data/models/task_model.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/ui/widgets/task_card_widget.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
+import 'package:get/get.dart';
 
 class ProgressTaskScreen extends StatefulWidget {
   const ProgressTaskScreen({super.key});
+
   static String route = '/progress-task';
 
   @override
@@ -18,8 +17,8 @@ class ProgressTaskScreen extends StatefulWidget {
 }
 
 class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
-  bool _isLoading = false;
-  List<TaskModel> _newTaskList = [];
+  ProgressTaskController progressTaskController =
+      Get.find<ProgressTaskController>();
 
   @override
   void initState() {
@@ -39,37 +38,40 @@ class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                Expanded(
-                  child: Visibility(
-                    visible: !_isLoading,
-                    replacement: const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primaryColor,
+                GetBuilder<ProgressTaskController>(builder: (controller) {
+                  return Expanded(
+                    child: Visibility(
+                      visible: !controller.isLoading,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
+                        ),
                       ),
+                      child: controller.progressTaskList.isEmpty
+                          ? const Center(
+                              child: Text('No Task Found!'),
+                            )
+                          : ListView.separated(
+                              itemBuilder: (context, index) {
+                                List<TaskModel> reversedList = controller
+                                    .progressTaskList.reversed
+                                    .toList();
+                                TaskModel task = reversedList[index];
+                                return TaskCardWidget(
+                                  task: task,
+                                  isRefreshed: _getProgressTaskList,
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const SizedBox(
+                                  height: 8,
+                                );
+                              },
+                              itemCount: controller.progressTaskList.length,
+                            ),
                     ),
-                    child: _newTaskList.isEmpty
-                        ? const Center(
-                            child: Text('No Task Found!'),
-                          )
-                        : ListView.separated(
-                            itemBuilder: (context, index) {
-                              List<TaskModel> reversedList =
-                                  _newTaskList.reversed.toList();
-                              TaskModel task = reversedList[index];
-                              return TaskCardWidget(
-                                task: task,
-                                isRefreshed: _getProgressTaskList,
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return const SizedBox(
-                                height: 8,
-                              );
-                            },
-                            itemCount: _newTaskList.length,
-                          ),
-                  ),
-                ),
+                  );
+                }),
               ],
             ),
           ),
@@ -79,22 +81,12 @@ class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
   }
 
   Future<void> _getProgressTaskList() async {
-    setState(() {
-      _newTaskList.clear();
-      _isLoading = true;
-    });
-    NetworkResponse response =
-        await NetworkCaller.getRequest(Urls.getProgressTaskList);
-    if (response.isSuccess) {
-      TaskListModel taskListModel =
-          TaskListModel.fromJson(response.responseData);
-      _newTaskList = taskListModel.taskList ?? [];
-    } else {
+    final isSuccess = await progressTaskController.getProgressTaskList();
+    if (isSuccess == false) {
       snackBarWidget(
-          context: context, message: response.errorMessage, isError: true);
+          context: context,
+          message: progressTaskController.errorMessage!,
+          isError: true);
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 }

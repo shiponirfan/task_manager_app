@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
+import 'package:task_manager_app/data/controllers/add_new_task_controller.dart';
 import 'package:task_manager_app/ui/widgets/appbar_widget.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
+import 'package:get/get.dart';
 
 class AddNewTask extends StatefulWidget {
   const AddNewTask({super.key});
+
   static String route = '/add-new-task';
 
   @override
@@ -19,8 +19,9 @@ class _AddNewTaskState extends State<AddNewTask> {
   final TextEditingController _descriptionTEController =
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isPending = false;
-  bool isRefreshed = false;
+
+  final AddNewTaskController addNewTaskController =
+      Get.find<AddNewTaskController>();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class _AddNewTaskState extends State<AddNewTask> {
           if (didPop) {
             return;
           } else {
-            Navigator.of(context).pop(isRefreshed);
+            Navigator.of(context).pop(addNewTaskController.isRefreshed);
           }
         },
         child: ImageBackground(
@@ -104,16 +105,18 @@ class _AddNewTaskState extends State<AddNewTask> {
           ),
           ElevatedButton(
               onPressed: _onTapSubmitButton,
-              child: Container(
-                  padding: const EdgeInsets.all(4),
-                  child: isPending
-                      ? const CircularProgressIndicator(
-                          color: Colors.white,
-                        )
-                      : const Text(
-                          'Add Task',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ))),
+              child: GetBuilder<AddNewTaskController>(builder: (controller) {
+                return Container(
+                    padding: const EdgeInsets.all(4),
+                    child: controller.isPending
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            'Add Task',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ));
+              })),
         ],
       ),
     );
@@ -126,27 +129,18 @@ class _AddNewTaskState extends State<AddNewTask> {
   }
 
   void _addNewTask() async {
-    isPending = true;
-    setState(() {});
-    Map<String, dynamic> bodyData = {
-      'title': _subjectTEController.text.trim(),
-      'description': _descriptionTEController.text.trim(),
-      "status": 'New',
-    };
-
-    NetworkResponse response = await NetworkCaller.postRequest(
-        url: Urls.createTaskUrl, body: bodyData);
-    isPending = false;
-    setState(() {});
-    if (response.isSuccess) {
+    bool isSuccess = await AddNewTaskController().addNewTask(
+      _subjectTEController.text.trim(),
+      _descriptionTEController.text.trim(),
+    );
+    if (isSuccess) {
       _clearTextFields();
       snackBarWidget(context: context, message: 'New Task Added');
-      setState(() {
-        isRefreshed = true;
-      });
     } else {
       snackBarWidget(
-          context: context, message: response.errorMessage, isError: true);
+          context: context,
+          message: AddNewTaskController().errorMessage!,
+          isError: true);
     }
   }
 
