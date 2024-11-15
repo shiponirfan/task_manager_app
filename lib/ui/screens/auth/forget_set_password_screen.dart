@@ -22,7 +22,8 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
   final TextEditingController _confirmPasswordTEController =
       TextEditingController();
-  bool _isLoading = false;
+  ResetPasswordController resetPasswordController =
+      Get.find<ResetPasswordController>();
 
   @override
   Widget build(BuildContext context) {
@@ -111,16 +112,18 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
           const SizedBox(
             height: 20,
           ),
-          ElevatedButton(
-              onPressed: _onTapSubmitButton,
-              child: _isLoading == true
-                  ? const CircularProgressIndicator(
-                      color: Colors.white,
-                    )
-                  : const Text(
-                      'Confirm',
-                      style: TextStyle(color: Colors.white),
-                    )),
+          GetBuilder<ResetPasswordController>(builder: (controller) {
+            return ElevatedButton(
+                onPressed: _onTapSubmitButton,
+                child: controller.isLoading == true
+                    ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                    : const Text(
+                        'Confirm',
+                        style: TextStyle(color: Colors.white),
+                      ));
+          }),
         ],
       ),
     );
@@ -158,28 +161,19 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
   }
 
   Future<void> _getRecoverResetPassword() async {
-    setState(() {
-      _isLoading = true;
-    });
-    bool isSuccess = await ResetPasswordController()
+    final bool isSuccess = await resetPasswordController
         .getResetPassword(_confirmPasswordTEController.text);
 
     if (isSuccess) {
-      setState(() {
-        _isLoading = false;
-      });
       snackBarWidget(
-          context: context, message: ResetPasswordController().successMessage!);
+          context: context, message: resetPasswordController.successMessage!);
       Get.offNamed(SignInScreen.route);
     } else {
       snackBarWidget(
           context: context,
-          message: ResetPasswordController().errorMessage!,
+          message: resetPasswordController.errorMessage!,
           isError: true);
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void _onTapSignInButton() {

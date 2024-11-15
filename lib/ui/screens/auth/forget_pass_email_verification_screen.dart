@@ -22,7 +22,9 @@ class _ForgetPassEmailVerificationScreenState
     extends State<ForgetPassEmailVerificationScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailTEController = TextEditingController();
-  bool _isLoading = false;
+
+  ResetPasswordController resetPasswordController =
+      Get.find<ResetPasswordController>();
 
   @override
   Widget build(BuildContext context) {
@@ -86,23 +88,25 @@ class _ForgetPassEmailVerificationScreenState
         const SizedBox(
           height: 20,
         ),
-        ElevatedButton(
-            onPressed: _onTapSubmitButton,
-            child: _isLoading == true
-                ? const CircularProgressIndicator(
-                    color: Colors.white,
-                  )
-                : Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        shape: BoxShape.circle),
-                    child: const Icon(
-                      Icons.arrow_forward_ios,
+        GetBuilder<ResetPasswordController>(builder: (controller) {
+          return ElevatedButton(
+              onPressed: _onTapSubmitButton,
+              child: controller.isEmailLoading == true
+                  ? const CircularProgressIndicator(
                       color: Colors.white,
-                      size: 14,
-                    ),
-                  )),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white),
+                          shape: BoxShape.circle),
+                      child: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                    ));
+        }),
       ],
     );
   }
@@ -138,36 +142,27 @@ class _ForgetPassEmailVerificationScreenState
     }
   }
 
+  Future<void> _getRecoverVerifyEmail() async {
+    final bool isSuccess = await resetPasswordController
+        .getRecoverVerifyEmail(_emailTEController.text);
+    if (isSuccess) {
+      snackBarWidget(
+          context: context,
+          message: resetPasswordController.successEmailMessage!);
+      _onTapNextPage();
+    } else {
+      snackBarWidget(
+          context: context,
+          message: resetPasswordController.errorEmailMessage!,
+          isError: true);
+    }
+  }
+
   void _onTapNextPage() {
     Get.toNamed(ForgetPinVerificationScreen.route);
   }
 
   void _onTapSignInButton() {
     Get.toNamed(SignInScreen.route);
-  }
-
-  Future<void> _getRecoverVerifyEmail() async {
-    setState(() {
-      _isLoading = true;
-    });
-    bool isSuccess = await ResetPasswordController()
-        .getRecoverVerifyEmail(_emailTEController.text);
-    if (isSuccess) {
-      setState(() {
-        _isLoading = false;
-      });
-      snackBarWidget(
-          context: context,
-          message: ResetPasswordController().successEmailMessage!);
-      _onTapNextPage();
-    } else {
-      snackBarWidget(
-          context: context,
-          message: ResetPasswordController().errorEmailMessage!,
-          isError: true);
-    }
-    setState(() {
-      _isLoading = false;
-    });
   }
 }

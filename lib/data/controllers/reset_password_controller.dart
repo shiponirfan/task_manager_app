@@ -9,6 +9,15 @@ class ResetPasswordController extends GetxController {
   String? _password;
   String? _errorMessage;
   String? _successMessage;
+  bool _isLoading = false;
+  bool _isOtpLoading = false;
+  bool _isEmailLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  bool get isOtpLoading => _isOtpLoading;
+
+  bool get isEmailLoading => _isEmailLoading;
 
   String? get errorMessage => _errorMessage;
 
@@ -30,6 +39,7 @@ class ResetPasswordController extends GetxController {
 
   Future<bool> getResetPassword(String getPassword) async {
     _password = getPassword;
+    _isLoading = true;
     update();
     bool isSuccess = false;
     Map<String, dynamic> body = {
@@ -47,11 +57,14 @@ class ResetPasswordController extends GetxController {
       _errorMessage = response.responseData['data'];
       update();
     }
+    _isLoading = false;
+    update();
     return isSuccess;
   }
 
   Future<bool> getRecoverVerifyOtp(String getOtp) async {
     _otp = getOtp;
+    _isOtpLoading = true;
     update();
     bool isSuccess = false;
     NetworkResponse response = await NetworkCaller.getRequest(
@@ -64,13 +77,16 @@ class ResetPasswordController extends GetxController {
       _errorOtpMessage = response.responseData['data'];
       update();
     }
+    _isOtpLoading = false;
+    update();
     return isSuccess;
   }
 
   Future<bool> getRecoverVerifyEmail(String getEmail) async {
+    bool isSuccess = false;
+    _isEmailLoading = true;
     email = getEmail;
     update();
-    bool isSuccess = false;
     NetworkResponse response =
         await NetworkCaller.getRequest(Urls.recoverVerifyEmail(email!));
     if (response.isSuccess) {
@@ -81,6 +97,8 @@ class ResetPasswordController extends GetxController {
       _errorEmailMessage = response.responseData['data'];
       update();
     }
+    _isEmailLoading = false;
+    update();
     return isSuccess;
   }
 }
