@@ -1,15 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
+import 'package:task_manager_app/data/controllers/sign_up_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
+import 'package:get/get.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
   static String route = '/signup';
 
   @override
@@ -200,29 +200,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onTapSignUp() async {
-    Map<String, dynamic> body = {
-      'email': _emailTEController.text,
-      'firstName': _firstNameTEController.text,
-      'lastName': _lastNameTEController.text,
-      'mobile': _mobileTEController.text,
-      'password': _passwordTEController.text
-    };
-    NetworkResponse response = await NetworkCaller.postRequest(
-      url: Urls.registrationUrl,
-      body: body,
+    bool isSuccess = await SignUpController().getSignUp(
+      _emailTEController.text.trim(),
+      _firstNameTEController.text.trim(),
+      _lastNameTEController.text.trim(),
+      _mobileTEController.text.trim(),
+      _passwordTEController.text,
     );
-    if (response.isSuccess) {
+    if (isSuccess) {
       _clearTEField();
       snackBarWidget(context: context, message: 'Registration Successful');
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SignInScreen(),
-          ));
+      Get.toNamed(SignInScreen.route);
     } else {
       snackBarWidget(
           context: context,
-          message: response.responseData?['data'],
+          message: SignUpController().errorMessage!,
           isError: true);
     }
   }
@@ -236,11 +228,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onTapSignInButton() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ));
+    Get.toNamed(SignInScreen.route);
   }
 
   @override

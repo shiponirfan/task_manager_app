@@ -7,9 +7,11 @@ import 'package:task_manager_app/ui/screens/views/main_nav_screen.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
+import 'package:get/get.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
   static String route = '/signin';
 
   @override
@@ -157,12 +159,10 @@ class _SignInScreenState extends State<SignInScreen> {
     );
     if (isSuccess) {
       _clearTEField();
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MainNavScreen(),
-          ),
-          (predicate) => false);
+      Get.offAllNamed(
+        MainNavScreen.route,
+        predicate: (route) => false,
+      );
     } else {
       snackBarWidget(
           context: context,
@@ -177,19 +177,11 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _onTapForgetPasswordButton() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ForgetPassEmailVerificationScreen(),
-        ));
+    Get.toNamed(ForgetPassEmailVerificationScreen.route);
   }
 
   void _onTapSignUpButton() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignUpScreen(),
-        ));
+    Get.toNamed(SignUpScreen.route);
   }
 
   @override

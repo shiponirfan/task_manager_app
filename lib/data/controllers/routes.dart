@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_pass_email_verification_screen.dart';
+import 'package:task_manager_app/ui/screens/auth/forget_pin_verification_screen.dart';
+import 'package:task_manager_app/ui/screens/auth/forget_set_password_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_up_screen.dart';
 import 'package:task_manager_app/ui/screens/splash_screen.dart';
@@ -15,8 +17,9 @@ class Routes {
     SplashScreen.route: (context) => const SplashScreen(),
     SignInScreen.route: (context) => const SignInScreen(),
     SignUpScreen.route: (context) => const SignUpScreen(),
-    // ForgetSetPasswordScreen.route : ForgetSetPasswordScreen(),
-    // ForgetPinVerificationScreen.route : ForgetPinVerificationScreen(),
+    ForgetSetPasswordScreen.route: (context) => const ForgetSetPasswordScreen(),
+    ForgetPinVerificationScreen.route: (context) =>
+        const ForgetPinVerificationScreen(),
     ForgetPassEmailVerificationScreen.route: (context) =>
         const ForgetPassEmailVerificationScreen(),
     AddNewTask.route: (context) => const AddNewTask(),

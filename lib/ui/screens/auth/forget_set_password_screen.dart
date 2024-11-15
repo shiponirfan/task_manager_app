@@ -1,20 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
+import 'package:task_manager_app/data/controllers/reset_password_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
+import 'package:get/get.dart';
 
 class ForgetSetPasswordScreen extends StatefulWidget {
-  const ForgetSetPasswordScreen(
-      {super.key, required this.email, required this.otp});
-  static String route = '/set-password';
+  const ForgetSetPasswordScreen({super.key});
 
-  final String email;
-  final String otp;
+  static String route = '/set-password';
 
   @override
   State<ForgetSetPasswordScreen> createState() =>
@@ -161,47 +157,32 @@ class _ForgetSetPasswordScreenState extends State<ForgetSetPasswordScreen> {
     }
   }
 
-  void _onTapSetPassword() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ));
-  }
-
-  void _onTapSignInButton() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ));
-  }
-
   Future<void> _getRecoverResetPassword() async {
     setState(() {
       _isLoading = true;
     });
-    Map<String, dynamic> body = {
-      "email": widget.email,
-      "OTP": widget.otp,
-      "password": _passwordTEController.text,
-    };
-    NetworkResponse response = await NetworkCaller.postRequest(
-        url: Urls.recoverResetPassword, body: body);
-    if (response.isSuccess) {
+    bool isSuccess = await ResetPasswordController()
+        .getResetPassword(_confirmPasswordTEController.text);
+
+    if (isSuccess) {
       setState(() {
         _isLoading = false;
       });
-      snackBarWidget(context: context, message: response.responseData['data']);
-      _onTapSetPassword();
+      snackBarWidget(
+          context: context, message: ResetPasswordController().successMessage!);
+      Get.offNamed(SignInScreen.route);
     } else {
       snackBarWidget(
           context: context,
-          message: response.responseData['data'],
+          message: ResetPasswordController().errorMessage!,
           isError: true);
     }
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _onTapSignInButton() {
+    Get.toNamed(SignInScreen.route);
   }
 }

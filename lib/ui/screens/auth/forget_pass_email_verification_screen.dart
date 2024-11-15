@@ -1,16 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
+import 'package:task_manager_app/data/controllers/reset_password_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_pin_verification_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
+import 'package:get/get.dart';
 
 class ForgetPassEmailVerificationScreen extends StatefulWidget {
   const ForgetPassEmailVerificationScreen({super.key});
+
   static String route = '/email-verification';
 
   @override
@@ -139,39 +139,31 @@ class _ForgetPassEmailVerificationScreenState
   }
 
   void _onTapNextPage() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ForgetPinVerificationScreen(
-            email: _emailTEController.text,
-          ),
-        ));
+    Get.toNamed(ForgetPinVerificationScreen.route);
   }
 
   void _onTapSignInButton() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ));
+    Get.toNamed(SignInScreen.route);
   }
 
   Future<void> _getRecoverVerifyEmail() async {
     setState(() {
       _isLoading = true;
     });
-    NetworkResponse response = await NetworkCaller.getRequest(
-        Urls.recoverVerifyEmail(_emailTEController.text));
-    if (response.isSuccess) {
+    bool isSuccess = await ResetPasswordController()
+        .getRecoverVerifyEmail(_emailTEController.text);
+    if (isSuccess) {
       setState(() {
         _isLoading = false;
       });
-      snackBarWidget(context: context, message: response.responseData['data']);
+      snackBarWidget(
+          context: context,
+          message: ResetPasswordController().successEmailMessage!);
       _onTapNextPage();
     } else {
       snackBarWidget(
           context: context,
-          message: response.responseData['data'],
+          message: ResetPasswordController().errorEmailMessage!,
           isError: true);
     }
     setState(() {

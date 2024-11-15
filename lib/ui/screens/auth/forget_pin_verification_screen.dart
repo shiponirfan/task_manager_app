@@ -1,19 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
+import 'package:task_manager_app/data/controllers/reset_password_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_set_password_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_in_screen.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
+import 'package:get/get.dart';
 
 class ForgetPinVerificationScreen extends StatefulWidget {
-  const ForgetPinVerificationScreen({super.key, required this.email});
-
-  final String email;
+  const ForgetPinVerificationScreen({super.key});
   static String route = '/pin-verification';
 
   @override
@@ -133,40 +130,32 @@ class _ForgetPinVerificationScreenState
   }
 
   void _onTapNextPage() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ForgetSetPasswordScreen(
-            email: widget.email,
-            otp: _otp.text,
-          ),
-        ));
+    Get.toNamed(ForgetSetPasswordScreen.route);
   }
 
   void _onTapSignInButton() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ));
+    Get.toNamed(SignInScreen.route);
   }
 
   Future<void> _getRecoverVerifyOtp() async {
     setState(() {
       _isLoading = true;
     });
-    NetworkResponse response = await NetworkCaller.getRequest(
-        Urls.recoverVerifyOtp(widget.email, int.parse(_otp.text)));
-    if (response.isSuccess) {
+
+    bool isSuccess =
+        await ResetPasswordController().getRecoverVerifyOtp(_otp.text);
+    if (isSuccess) {
       setState(() {
         _isLoading = false;
       });
-      snackBarWidget(context: context, message: response.responseData['data']);
+      snackBarWidget(
+          context: context,
+          message: ResetPasswordController().successOtpMessage!);
       _onTapNextPage();
     } else {
       snackBarWidget(
           context: context,
-          message: response.responseData['data'],
+          message: ResetPasswordController().errorOtpMessage!,
           isError: true);
     }
     setState(() {
