@@ -1,19 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/data/controllers/auth_controller.dart';
-import 'package:task_manager_app/data/models/network_response.dart';
-import 'package:task_manager_app/data/models/profile_model.dart';
-import 'package:task_manager_app/data/services/network_caller.dart';
+import 'package:task_manager_app/data/controllers/sign_in_controller.dart';
 import 'package:task_manager_app/ui/screens/auth/forget_pass_email_verification_screen.dart';
 import 'package:task_manager_app/ui/screens/auth/sign_up_screen.dart';
 import 'package:task_manager_app/ui/screens/views/main_nav_screen.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
 import 'package:task_manager_app/ui/widgets/image_background.dart';
 import 'package:task_manager_app/utils/snackbar_widget.dart';
-import 'package:task_manager_app/utils/urls.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+  static String route = '/signin';
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -154,20 +151,12 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _onTapLogin() async {
-    Map<String, dynamic> body = {
-      'email': _emailTEController.text,
-      'password': _passwordTEController.text
-    };
-    NetworkResponse response = await NetworkCaller.postRequest(
-      url: Urls.loginUrl,
-      body: body,
+    bool isSuccess = await SignInController().getLogin(
+      _emailTEController.text,
+      _passwordTEController.text,
     );
-    if (response.isSuccess) {
+    if (isSuccess) {
       _clearTEField();
-      ProfileModel userData = ProfileModel.fromJson(response.responseData);
-      await AuthController.saveAccessToken(userData.token!);
-      await AuthController.saveUserInfo(userData.profileData!);
-      snackBarWidget(context: context, message: 'Login Successful');
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -177,7 +166,7 @@ class _SignInScreenState extends State<SignInScreen> {
     } else {
       snackBarWidget(
           context: context,
-          message: response.responseData?['data'],
+          message: SignInController().errorMessage!,
           isError: true);
     }
   }

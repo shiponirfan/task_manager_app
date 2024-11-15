@@ -11,6 +11,7 @@ import 'package:task_manager_app/utils/urls.dart';
 
 class CompletedTaskScreen extends StatefulWidget {
   const CompletedTaskScreen({super.key});
+  static String route = '/completed-task';
 
   @override
   State<CompletedTaskScreen> createState() => _CompletedTaskScreenState();

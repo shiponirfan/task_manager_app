@@ -11,6 +11,7 @@ import 'package:task_manager_app/utils/urls.dart';
 
 class ProgressTaskScreen extends StatefulWidget {
   const ProgressTaskScreen({super.key});
+  static String route = '/progress-task';
 
   @override
   State<ProgressTaskScreen> createState() => _ProgressTaskScreenState();

@@ -14,6 +14,7 @@ class ForgetPinVerificationScreen extends StatefulWidget {
   const ForgetPinVerificationScreen({super.key, required this.email});
 
   final String email;
+  static String route = '/pin-verification';
 
   @override
   State<ForgetPinVerificationScreen> createState() =>

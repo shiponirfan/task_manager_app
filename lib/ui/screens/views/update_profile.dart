@@ -13,6 +13,7 @@ class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key, required this.getUpdatedProfileDetails});
 
   final VoidCallback getUpdatedProfileDetails;
+  static String route = '/update-profile';
 
   @override
   State<UpdateProfile> createState() => _UpdateProfileState();

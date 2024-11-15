@@ -11,6 +11,7 @@ import 'package:task_manager_app/utils/urls.dart';
 class ForgetSetPasswordScreen extends StatefulWidget {
   const ForgetSetPasswordScreen(
       {super.key, required this.email, required this.otp});
+  static String route = '/set-password';
 
   final String email;
   final String otp;

@@ -11,6 +11,7 @@ import 'package:task_manager_app/utils/urls.dart';
 
 class CanceledTaskScreen extends StatefulWidget {
   const CanceledTaskScreen({super.key});
+  static String route = '/canceled-task';
 
   @override
   State<CanceledTaskScreen> createState() => _CanceledTaskScreenState();

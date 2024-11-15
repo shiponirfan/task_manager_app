@@ -10,6 +10,7 @@ import 'package:task_manager_app/utils/urls.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+  static String route = '/signup';
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();

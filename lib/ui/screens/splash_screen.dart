@@ -7,6 +7,7 @@ import 'package:task_manager_app/utils/image_path.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+  static String route = '/';
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();

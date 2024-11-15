@@ -11,6 +11,7 @@ import 'package:task_manager_app/utils/urls.dart';
 
 class ForgetPassEmailVerificationScreen extends StatefulWidget {
   const ForgetPassEmailVerificationScreen({super.key});
+  static String route = '/email-verification';
 
   @override
   State<ForgetPassEmailVerificationScreen> createState() =>

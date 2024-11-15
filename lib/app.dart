@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager_app/data/binding/initial_binding.dart';
+import 'package:task_manager_app/data/controllers/routes.dart';
 import 'package:task_manager_app/ui/screens/splash_screen.dart';
 import 'package:task_manager_app/utils/app_colors.dart';
+import 'package:get/get.dart';
 
 class TaskManagerApp extends StatefulWidget {
   const TaskManagerApp({super.key});
@@ -14,14 +17,16 @@ class TaskManagerApp extends StatefulWidget {
 class _TaskManagerAppState extends State<TaskManagerApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       navigatorKey: TaskManagerApp.navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorSchemeSeed: AppColors.primaryColor,
+          colorSchemeSeed: AppColors.primaryColor,
           inputDecorationTheme: _buildInputDecorationTheme(),
           elevatedButtonTheme: _buildElevatedButtonThemeData()),
-      home: const SplashScreen(),
+      initialBinding: InitialBinding(),
+      routes: Routes.route,
+      initialRoute: SplashScreen.route,
     );
   }
 
@@ -33,17 +38,16 @@ class _TaskManagerAppState extends State<TaskManagerApp> {
       filled: true,
       fillColor: Colors.white,
       border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(8)),
+          borderSide: BorderSide.none, borderRadius: BorderRadius.circular(8)),
     );
   }
 
   ElevatedButtonThemeData _buildElevatedButtonThemeData() {
     return ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                fixedSize: const Size.fromWidth(double.maxFinite),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8))));
+        style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryColor,
+            fixedSize: const Size.fromWidth(double.maxFinite),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8))));
   }
 }

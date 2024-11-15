@@ -15,6 +15,7 @@ import 'package:task_manager_app/utils/urls.dart';
 
 class NewTaskScreen extends StatefulWidget {
   const NewTaskScreen({super.key});
+  static String route = '/new-task';
 
   @override
   State<NewTaskScreen> createState() => _NewTaskScreenState();
