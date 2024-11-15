@@ -49,7 +49,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       foregroundColor: Colors.white,
       title: GetBuilder<UpdateProfileController>(builder: (controller) {
         Uint8List imageBytes =
-            base64Decode(controller.userDetails?.photo ?? userDetails.photo!);
+            base64Decode(controller.userDetails?.photo ?? userDetails.photo ?? '');
         return GestureDetector(
           onTap: () {
             if (widget.isProfileScreenOpen) {
@@ -86,7 +86,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 18)),
-                  Text(controller.userDetails?.email ?? userDetails.email!,
+                  Text(controller.userDetails?.email ?? userDetails.email  ?? '',
                       style:
                           const TextStyle(color: Colors.white, fontSize: 14)),
                 ],

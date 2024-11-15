@@ -22,6 +22,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
+  SignInController signInController = Get.find<SignInController>();
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +154,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _onTapLogin() async {
-    bool isSuccess = await SignInController().getLogin(
+    bool isSuccess = await signInController.getLogin(
       _emailTEController.text,
       _passwordTEController.text,
     );
@@ -166,7 +167,7 @@ class _SignInScreenState extends State<SignInScreen> {
     } else {
       snackBarWidget(
           context: context,
-          message: SignInController().errorMessage!,
+          message: signInController.errorMessage!,
           isError: true);
     }
   }

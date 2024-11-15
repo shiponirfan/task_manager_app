@@ -24,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
+  SignUpController signUpController = Get.find<SignUpController>();
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +201,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onTapSignUp() async {
-    bool isSuccess = await SignUpController().getSignUp(
+    bool isSuccess = await signUpController.getSignUp(
       _emailTEController.text.trim(),
       _firstNameTEController.text.trim(),
       _lastNameTEController.text.trim(),
@@ -214,7 +215,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else {
       snackBarWidget(
           context: context,
-          message: SignUpController().errorMessage!,
+          message: signUpController.errorMessage!,
           isError: true);
     }
   }

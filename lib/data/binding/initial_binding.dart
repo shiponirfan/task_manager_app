@@ -13,15 +13,17 @@ import 'package:task_manager_app/data/controllers/update_profile_controller.dart
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(SignInController());
-    Get.put(SignUpController());
-    Get.put(AddNewTaskController());
-    Get.put(CanceledTaskController());
-    Get.put(CompletedTaskController());
-    Get.put(NewTaskController());
-    Get.put(NewTaskCountController());
-    Get.put(ProgressTaskController());
-    Get.put(UpdateProfileController());
-    Get.put(ResetPasswordController());
+    Get.lazyPut(
+      () => SignInController(),
+    );
+    Get.lazyPut(() => SignUpController());
+    Get.lazyPut(() => AddNewTaskController());
+    Get.lazyPut(() => CanceledTaskController());
+    Get.lazyPut(() => CompletedTaskController());
+    Get.lazyPut(() => NewTaskController());
+    Get.lazyPut(() => NewTaskCountController());
+    Get.lazyPut(() => ProgressTaskController());
+    Get.lazyPut(() => UpdateProfileController());
+    Get.lazyPut(() => ResetPasswordController());
   }
 }
